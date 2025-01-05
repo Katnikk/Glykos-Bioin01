@@ -1,4 +1,111 @@
-.Rproj.user
-.Rhistory
-.RData
-.Ruserdata
+library(stringr)
+#Check for stop codon
+true_stop_codon <- function(codon)
+{
+     stop_codons <- c("TAA", "TAG", "TGA")    
+     return(codon %in% stop_codons)
+}
+# Check for start codon "ATG"
+check_start_codon <- function(sequence)
+{
+     start_codon <- "ATG"
+     return(str_detect(sequence, start_codon)) 
+}
+ # Check for length
+check_sequence <- function(sequence) 
+{
+    
+if (nchar(sequence) < 9)
+  {
+         print("Not enough nucleotides")
+         quit(status = 1)
+  }
+ # Check for start codon position
+ if (check_start_codon(sequence))
+    {
+     start_pos <- str_locate(sequence, "ATG")[1]
+     print(paste("Start codon found at position:", start_pos))
+     return(start_pos)
+    } 
+ else
+      {
+     print("No start codon found")
+     quit(status = 1)
+      }
+ }
+ sequence <- readline(prompt = "Enter the nucleotide sequence: ")
+Enter the nucleotide sequence: 
+ p=0
+ m=0
+ 
+ p <- 0  # start codon
+ m <- 0  # start codon reverse
+ for (i in 1:(nchar(sequence) - 2)) 
+{
+     if (substr(sequence, i, i + 2) %in% c("ATG", "AUG"))
+    {
+         p <- i
+         break
+    }
+}
+ (p > 0) 
+[1] TRUE
+{
+  input <- substring(sequence, p)
+  input <- unlist(strsplit(input, split = "(?<=.{3})", perl = TRUE))
+
+   for (n in seq_along(input)) 
+       {
+         if (true_stop_codon(input[n]))
+             {
+            input <- input[1:n]
+             print("It is a coding sequence")
+             print("If we were to show the codons, it would look like this:")
+             print(input)
+             break
+             }
+     }
+ }
+Reverse complement
+
+ reverse <- strsplit(sequence, "")[[1]]
+ reverse <- rev(reverse)
+ reverse <- sapply(reverse, function(x)
+{
+     switch(x, A = "T", T = "A", G = "C", C = "G", U = "A", x)
+})
+ reverse <- paste0(reverse, collapse = "")
+ 
+ # Check start codon 
+ for (l in 1:(nchar(reverse) - 2)) 
+    if (substr(reverse, l, l + 2) %in% c("ATG", "AUG")) 
+    
+{       m <- l
+         reverse <- substring(reverse, m)
+         reverse <- unlist(strsplit(reverse, split = "(?<=.{3})", perl = TRUE))
+        
+         for (k in seq_along(reverse))
+          {
+             if (true_stop_codon(reverse[k]))
+                 {
+                reverse <- reverse[1:k]
+                 print("The reversed sequence is a coding one.")
+                 print("If we were to show the codons, it would look like this:")
+                print(reverse)
+                 break
+                 }
+         }
+         break
+}
+ 
+ 
+# no start codon
+if (p == 0 && m == 0)
+    {
+    print("Could not find coding sequence")
+     }
+ 
+if (p == 0 && m == 0)
+ { 
+    print("Could not find coding sequence")
+ }
